@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lichi_test/widgets/product_list_widget.dart';
+import 'package:lichi_test/routing/app_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -7,7 +7,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = AppRouter().router;
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         useMaterial3: true,
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         //   ),
         // ),
       ),
-      home: const ProductListWidget(),
+      routerConfig: router,
     );
   }
 }
