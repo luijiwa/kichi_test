@@ -16,8 +16,8 @@ AProduct _$AProductFromJson(Map<String, dynamic> json) => AProduct(
       name: json['name'] as String,
       descriptions:
           Descriptions.fromJson(json['descriptions'] as Map<String, dynamic>),
-      sizes: json['sizes'] as String? ?? 'XS',
-      colors: Colors.fromJson(json['colors'] as Map<String, dynamic>),
+      sizes: Sizes.fromJson(json['sizes'] as Map<String, dynamic>),
+      colors: ItemColors.fromJson(json['colors'] as Map<String, dynamic>),
       formatPrice: (json['format_price'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -30,7 +30,7 @@ Map<String, dynamic> _$AProductToJson(AProduct instance) => <String, dynamic>{
       'photos': instance.photos.map((e) => e.toJson()).toList(),
       'name': instance.name,
       'descriptions': instance.descriptions.toJson(),
-      'sizes': instance.sizes,
+      'sizes': instance.sizes.toJson(),
       'colors': instance.colors.toJson(),
       'format_price': instance.formatPrice,
     };
@@ -54,38 +54,21 @@ Map<String, dynamic> _$CurrencyToJson(Currency instance) => <String, dynamic>{
 Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
       big: json['big'] as String,
       thumbs: Thumbs.fromJson(json['thumbs'] as Map<String, dynamic>),
-      blurhash: json['blurhash'] as String,
-      basicColor:
-          BasicColor.fromJson(json['basicColor'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PhotoToJson(Photo instance) => <String, dynamic>{
       'big': instance.big,
-      'thumbs': instance.thumbs,
-      'blurhash': instance.blurhash,
-      'basicColor': instance.basicColor,
+      'thumbs': instance.thumbs.toJson(),
     };
 
 Thumbs _$ThumbsFromJson(Map<String, dynamic> json) => Thumbs(
-      n768_1024: json['n768_1024'] as String,
-      n384_512: json['n384_512'] as String,
+      json['n768_1024'] as String?,
+      json['n384_512'] as String?,
     );
 
 Map<String, dynamic> _$ThumbsToJson(Thumbs instance) => <String, dynamic>{
       'n768_1024': instance.n768_1024,
       'n384_512': instance.n384_512,
-    };
-
-BasicColor _$BasicColorFromJson(Map<String, dynamic> json) => BasicColor(
-      colors:
-          (json['colors'] as List<dynamic>).map((e) => e as String).toList(),
-      luminance: (json['luminance'] as num).toDouble(),
-    );
-
-Map<String, dynamic> _$BasicColorToJson(BasicColor instance) =>
-    <String, dynamic>{
-      'colors': instance.colors,
-      'luminance': instance.luminance,
     };
 
 Descriptions _$DescriptionsFromJson(Map<String, dynamic> json) => Descriptions(
@@ -98,27 +81,75 @@ Map<String, dynamic> _$DescriptionsToJson(Descriptions instance) =>
     };
 
 Sizes _$SizesFromJson(Map<String, dynamic> json) => Sizes(
-      n3: json['n3'] as String,
-      n4: json['n4'] as String,
+      size3: Size.fromJson(json['3'] as Map<String, dynamic>),
+      size4: Size.fromJson(json['4'] as Map<String, dynamic>),
+      size5: Size.fromJson(json['5'] as Map<String, dynamic>),
+      size6: Size.fromJson(json['6'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SizesToJson(Sizes instance) => <String, dynamic>{
-      'n3': instance.n3,
-      'n4': instance.n4,
+      '3': instance.size3.toJson(),
+      '4': instance.size4.toJson(),
+      '5': instance.size5.toJson(),
+      '6': instance.size6.toJson(),
     };
 
-Colors _$ColorsFromJson(Map<String, dynamic> json) => Colors(
-      current: Current.fromJson(json['current'] as Map<String, dynamic>),
+Size _$SizeFromJson(Map<String, dynamic> json) => Size(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      amount: json['amount'] as int,
+      show: json['show'] as bool,
+      barcode: json['barcode'] as String,
+      subscribe: json['subscribe'] as bool,
     );
 
-Map<String, dynamic> _$ColorsToJson(Colors instance) => <String, dynamic>{
-      'current': instance.current,
+Map<String, dynamic> _$SizeToJson(Size instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'amount': instance.amount,
+      'show': instance.show,
+      'barcode': instance.barcode,
+      'subscribe': instance.subscribe,
+    };
+
+ItemColors _$ItemColorsFromJson(Map<String, dynamic> json) => ItemColors(
+      current: Current.fromJson(json['current'] as Map<String, dynamic>),
+      otherColors: (json['other'] as List<dynamic>?)
+          ?.map((e) => ColorInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ItemColorsToJson(ItemColors instance) =>
+    <String, dynamic>{
+      'current': instance.current.toJson(),
+      'other': instance.otherColors.map((e) => e.toJson()).toList(),
     };
 
 Current _$CurrentFromJson(Map<String, dynamic> json) => Current(
-      colorSample: json['color_sample'] as List<dynamic>,
+      name: json['name'] as String,
+      value: json['value'] as String,
     );
 
 Map<String, dynamic> _$CurrentToJson(Current instance) => <String, dynamic>{
-      'color_sample': instance.colorSample,
+      'name': instance.name,
+      'value': instance.value,
     };
+
+ColorInfo _$ColorInfoFromJson(Map<String, dynamic> json) => ColorInfo(
+      name: json['name'] as String?,
+      value: json['value'] as String?,
+    );
+
+Map<String, dynamic> _$ColorInfoToJson(ColorInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('name', instance.name);
+  writeNotNull('value', instance.value);
+  return val;
+}

@@ -14,10 +14,11 @@ class ApiService {
       'pages': 1,
     });
     if (response.statusCode == 200) {
-      final List<dynamic> data = response.data['aProduct'];
+      final apiData = response.data['api_data'];
+      final List<dynamic> aProduct = apiData['aProduct'];
+
       final List<AProduct> productList =
-          data.map((json) => AProduct.fromJson(json)).toList();
-      print(productList);
+          aProduct.map((json) => AProduct.fromJson(json)).toList();
       return productList;
     } else {
       throw Exception('Ошибка при загрузке новостей');

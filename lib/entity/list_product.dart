@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'list_product.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class AProduct {
-  final int id; //true
+  final int id;
   // final String template;
   // final String brand_name;
   // final String category_id;
@@ -35,9 +36,10 @@ class AProduct {
   // final Measurements measurements;
   // final String measurements_unit;
   // final Model model;
-  final String sizes;
+  // final Stores stores;
+  final Sizes sizes;
   // final bool is_ffm;
-  final Colors colors;
+  final ItemColors colors;
   @JsonKey(name: 'format_price')
   final List<String> formatPrice;
   // final Details_name details_name;
@@ -51,7 +53,7 @@ class AProduct {
     required this.photos,
     required this.name,
     required this.descriptions,
-    this.sizes = 'XS',
+    required this.sizes,
     required this.colors,
     required this.formatPrice,
   });
@@ -84,17 +86,13 @@ class Currency {
   Map<String, dynamic> toJson() => _$CurrencyToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Photo {
   final String big;
   final Thumbs thumbs;
-  final String blurhash;
-  final BasicColor basicColor;
   Photo({
     required this.big,
     required this.thumbs,
-    required this.blurhash,
-    required this.basicColor,
   });
   factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
 
@@ -103,30 +101,13 @@ class Photo {
 
 @JsonSerializable()
 class Thumbs {
-  final String n768_1024;
-  final String n384_512;
-  Thumbs({
-    required this.n768_1024,
-    required this.n384_512,
-  });
+  final String? n768_1024;
+  final String? n384_512;
 
+  Thumbs(this.n768_1024, this.n384_512);
   factory Thumbs.fromJson(Map<String, dynamic> json) => _$ThumbsFromJson(json);
 
   Map<String, dynamic> toJson() => _$ThumbsToJson(this);
-}
-
-@JsonSerializable()
-class BasicColor {
-  final List<String> colors;
-  final double luminance;
-  BasicColor({
-    required this.colors,
-    required this.luminance,
-  });
-  factory BasicColor.fromJson(Map<String, dynamic> json) =>
-      _$BasicColorFromJson(json);
-
-  Map<String, dynamic> toJson() => _$BasicColorToJson(this);
 }
 
 @JsonSerializable()
@@ -143,13 +124,21 @@ class Descriptions {
   Map<String, dynamic> toJson() => _$DescriptionsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Sizes {
-  final String n3;
-  final String n4;
+  @JsonKey(name: '3')
+  final Size size3;
+  @JsonKey(name: '4')
+  final Size size4;
+  @JsonKey(name: '5')
+  final Size size5;
+  @JsonKey(name: '6')
+  final Size size6;
   Sizes({
-    required this.n3,
-    required this.n4,
+    required this.size3,
+    required this.size4,
+    required this.size5,
+    required this.size6,
   });
   factory Sizes.fromJson(Map<String, dynamic> json) => _$SizesFromJson(json);
 
@@ -157,27 +146,69 @@ class Sizes {
 }
 
 @JsonSerializable()
-class Colors {
-  final Current current;
+class Size {
+  final int id;
+  final String name;
+  final int amount;
+  final bool show;
+  final String barcode;
+  final bool subscribe;
 
-  Colors({
-    required this.current,
+  Size({
+    required this.id,
+    required this.name,
+    required this.amount,
+    required this.show,
+    required this.barcode,
+    required this.subscribe,
   });
-  factory Colors.fromJson(Map<String, dynamic> json) => _$ColorsFromJson(json);
+  factory Size.fromJson(Map<String, dynamic> json) => _$SizeFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ColorsToJson(this);
+  Map<String, dynamic> toJson() => _$SizeToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ItemColors {
+  final Current current;
+  @JsonKey(name: 'other')
+  List<ColorInfo> otherColors;
+  ItemColors({
+    required this.current,
+    List<ColorInfo>? otherColors,
+  }) : otherColors = otherColors ?? <ColorInfo>[];
+
+  factory ItemColors.fromJson(Map<String, dynamic> json) =>
+      _$ItemColorsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItemColorsToJson(this);
 }
 
 @JsonSerializable()
 class Current {
-  @JsonKey(name: 'color_sample')
-  final List<dynamic> colorSample;
+  final String name;
+  final String value;
 
   Current({
-    required this.colorSample,
+    required this.name,
+    required this.value,
   });
   factory Current.fromJson(Map<String, dynamic> json) =>
       _$CurrentFromJson(json);
 
   Map<String, dynamic> toJson() => _$CurrentToJson(this);
+}
+
+@JsonSerializable(includeIfNull: false)
+class ColorInfo {
+  final String? name;
+  final String? value;
+
+  ColorInfo({
+    required this.name,
+    required this.value,
+  });
+  factory ColorInfo.fromJson(Map<String, dynamic> json) =>
+      _$ColorInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ColorInfoToJson(this);
 }
