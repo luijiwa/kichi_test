@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lichi_test/routing/app_router.dart';
 import 'package:lichi_test/widgets/custom_text_style.dart';
+import 'package:lichi_test/widgets/product_list/product_list_model.dart';
+import 'package:provider/provider.dart';
 
-class ProductListWidget extends StatelessWidget {
+class ProductListWidget extends StatefulWidget {
   const ProductListWidget({super.key});
 
   @override
+  State<ProductListWidget> createState() => _ProductListWidgetState();
+}
+
+class _ProductListWidgetState extends State<ProductListWidget> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+        () => context.read<ProductListWidgetModel>().loadProduct());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List color = [Colors.amber, Colors.blueAccent, Colors.purple];
     final childAspectRatio = MediaQuery.of(context).size.width /
         (MediaQuery.of(context).size.height);
+    final productList =
+        Provider.of<ProductListWidgetModel>(context).productList;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -87,7 +104,7 @@ class ProductListWidget extends StatelessWidget {
               ]),
             ),
             SliverGrid.builder(
-              itemCount: 4,
+              itemCount: productList.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 26,
@@ -95,7 +112,7 @@ class ProductListWidget extends StatelessWidget {
                 childAspectRatio: childAspectRatio,
               ),
               itemBuilder: (BuildContext context, int index) {
-                return ProductListItem(color: color);
+                return ProductListItem(index: index);
               },
             ),
           ],
@@ -108,58 +125,91 @@ class ProductListWidget extends StatelessWidget {
 class ProductListItem extends StatelessWidget {
   const ProductListItem({
     super.key,
-    required this.color,
+    required this.index,
   });
 
-  final List color;
-
+  final int index;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    List color = [];
+    final productList =
+        Provider.of<ProductListWidgetModel>(context).productList;
+    final product = productList[index];
+
+    color.add(Color(int.parse(
+      'FF${product.colors.current.value}',
+      radix: 16,
+    )));
+    List<Color> otherColor = product.colors.otherColors
+        .map((item) => (Color(int.parse(
+              'FF${item.value}',
+              radix: 16,
+            ))))
+        .toList();
+    color.addAll(otherColor);
+    return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Image.network(
-            'https://static.lichi.com/product/45960/d4152e445b295f4a889fe9abb9960ba6.jpg',
-            height: 276,
-            width: 206,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 276,
+              width: 206,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(product.photos[0].big),
+                ),
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            const SizedBox(height: 17),
+            Text(
+              '${product.price} ${product.currency.postfix} ',
+              style: CustomTextStyle.cartItemAddStyle,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              product.name,
+              textAlign: TextAlign.center,
+              style: CustomTextStyle.cartPriceStyle1,
+            ),
+            const SizedBox(height: 19),
+            Container(
+              alignment: Alignment.center,
+              height: 10,
+              width: 100,
+              child: GridView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 9,
+                  ),
+                  itemCount: color.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                        decoration: BoxDecoration(
+                      color: color[index],
+                      shape: BoxShape.circle,
+                    ));
+                  }),
+            ),
+            //
+          ],
+        ),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              context.goNamed(
+                AppRoutes.catalogItem.name,
+                extra: product,
+              );
+            },
           ),
         ),
-        const SizedBox(height: 17),
-        const Text(
-          '${1990} руб.',
-          style: CustomTextStyle.cartItemAddStyle,
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'Платье макси из трикотажа ажурной ткани',
-          textAlign: TextAlign.center,
-          style: CustomTextStyle.cartPriceStyle1,
-        ),
-        const SizedBox(height: 19),
-        Container(
-          alignment: Alignment.center,
-          height: 10,
-          width: 100,
-          child: GridView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 9,
-              ),
-              itemCount: color.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                    decoration: BoxDecoration(
-                  color: color[index],
-                  shape: BoxShape.circle,
-                ));
-              }),
-        ),
-        //
       ],
     );
   }

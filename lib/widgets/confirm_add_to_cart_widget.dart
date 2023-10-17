@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lichi_test/widgets/custom_text_style.dart';
 
-class ConfirmAddToCartWidget extends StatelessWidget {
-  const ConfirmAddToCartWidget({super.key});
-
+class SuccessModalWidget extends StatelessWidget {
+  const SuccessModalWidget({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

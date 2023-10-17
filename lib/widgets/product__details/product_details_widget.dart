@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lichi_test/entity/list_product.dart';
+
+import '../../routing/app_router.dart';
 
 class ProductDetailsWidget extends StatelessWidget {
-  const ProductDetailsWidget({super.key});
+  const ProductDetailsWidget({
+    super.key,
+    required this.product,
+  });
+  final AProduct product;
 
   @override
   Widget build(BuildContext context) {
-    const List color = [Colors.amber, Colors.blueAccent, Colors.purple];
+    List color = [];
+    color.add(Color(int.parse(
+      'FF${product.colors.current.value}',
+      radix: 16,
+    )));
+    List<Color> otherColor = product.colors.otherColors
+        .map((item) => (Color(int.parse(
+              'FF${item.value}',
+              radix: 16,
+            ))))
+        .toList();
+    color.addAll(otherColor);
+
     return Scaffold(
       body: CustomScrollView(
         // physics: ScrollPhysics(),
@@ -14,7 +34,7 @@ class ProductDetailsWidget extends StatelessWidget {
               expandedHeight: 524,
               flexibleSpace: FlexibleSpaceBar(
                 background: Image.network(
-                  'https://static.lichi.com/product/45960/d4152e445b295f4a889fe9abb9960ba6.jpg',
+                  product.photos[0].big,
                   fit: BoxFit.cover,
                 ),
                 collapseMode: CollapseMode.pin,
@@ -37,12 +57,12 @@ class ProductDetailsWidget extends StatelessWidget {
           SliverToBoxAdapter(
             child: Column(children: [
               const SizedBox(height: 26),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 72),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Text(
-                  'Платье мини с объемными рукавами и вырезом на спинке',
+                  product.name,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w300,
                     // fontStyle: FontStyle.normal,
@@ -76,11 +96,14 @@ class ProductDetailsWidget extends StatelessWidget {
                     }),
               ),
               const SizedBox(height: 8),
-              const Text('Серый', textAlign: TextAlign.center),
+              Text(
+                product.colors.current.name,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 22),
-              const Text(
-                '${1990} руб.',
-                style: TextStyle(
+              Text(
+                '${product.price} ${product.currency.postfix}',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -97,20 +120,18 @@ class ProductDetailsWidget extends StatelessWidget {
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () => context.goNamed(
+                    AppRoutes.successModal.name,
+                  ),
                   child: const Text('Добавить в корзину'),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 43,
-                  top: 40,
-                  left: 22,
-                  right: 22,
-                ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    bottom: 43, top: 40, left: 22, right: 22),
                 child: Text(
-                  'Эффектное прилегающее платье длины макси, выполненное из приятного к телу трикотажа ажурной вязки. Модель имеет глубокий V-образный вырез, дополненный воланами в рубчик, а также длинные рукава с объемными расклешенными манжетами и застежку на мелкие серебристые пуговицы.\n\n- длина макси\n- прилегающий силуэт\n- V-образный вырез\n- волан на воротнике\n- длинные рукава с расклешенными манжетами\n- прямая юбка\n- застежка на пуговицы\n- серебристый оттенок фурнитуры',
-                  style: TextStyle(fontSize: 13),
+                  product.descriptions.markdown,
+                  style: const TextStyle(fontSize: 13),
                   textAlign: TextAlign.start,
                 ),
               ),
