@@ -1,42 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lichi_test/entity/list_product.dart';
-import 'package:lichi_test/widgets/confirm_add_to_cart_widget.dart';
-import 'package:lichi_test/widgets/product__details/product_details_widget.dart';
+import 'package:lichi_test/domain/entity/list_product.dart';
+import 'package:lichi_test/routing/app_routes.dart';
+import 'package:lichi_test/widgets/cart/cart_widget.dart';
+import 'package:lichi_test/widgets/cart/cart_widget_model.dart';
+import 'package:lichi_test/widgets/product_details/product_details_widget_model.dart';
+import 'package:lichi_test/widgets/success_modal_widget.dart';
+import 'package:lichi_test/widgets/product_details/product_details_widget.dart';
 import 'package:lichi_test/widgets/product_list/product_list_model.dart';
 import 'package:lichi_test/widgets/product_list/product_list_widget.dart';
 import 'package:provider/provider.dart';
-
-enum AppRoutes {
-  cart(
-    name: 'cart',
-    path: '/cart',
-  ),
-  catalog(
-    name: 'catalog',
-    path: '/',
-  ),
-  catalogItem(
-    name: 'catalogItem',
-    path: 'catalogItem',
-  ),
-  successModal(
-    name: 'successModal',
-    path: '/successModal',
-  ),
-  ;
-
-  const AppRoutes({
-    required this.name,
-    required this.path,
-  });
-
-  final String name;
-  final String path;
-
-  @override
-  String toString() => name;
-}
 
 class AppRouter {
   late final router = GoRouter(
@@ -57,7 +30,10 @@ class AppRouter {
               final product = state.extra as AProduct;
               return CustomTransitionPage(
                 key: state.pageKey,
-                child: ProductDetailsWidget(product: product),
+                child: ChangeNotifierProvider(
+                  create: (context) => ProductDetailsWidgetModel(),
+                  child: ProductDetailsWidget(product: product),
+                ),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -80,8 +56,59 @@ class AppRouter {
       GoRoute(
         name: AppRoutes.successModal.name,
         path: AppRoutes.successModal.path,
-        builder: (BuildContext context, GoRouterState state) =>
-            const SuccessModalWidget(),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final image = state.uri.queryParameters['image'] as String;
+          final name = state.uri.queryParameters['name'] as String;
+          final size = state.uri.queryParameters['size'] as String;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: SuccessModalWidget(
+              image: image,
+              name: name,
+              size: size,
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: animation.drive(
+                  Tween<Offset>(
+                    begin: const Offset(0.0, 1),
+                    end: Offset.zero,
+                  ).chain(
+                    CurveTween(curve: Curves.easeOut),
+                  ),
+                ),
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoutes.cart.name,
+        path: AppRoutes.cart.path,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: ChangeNotifierProvider(
+                create: (BuildContext context) => CartWidgetModel(),
+                child: const CartWidget()),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: animation.drive(
+                  Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).chain(
+                    CurveTween(curve: Curves.easeOut),
+                  ),
+                ),
+                child: child,
+              );
+            },
+          );
+        },
       ),
     ],
   );
