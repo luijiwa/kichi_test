@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lichi_test/domain/api_services.dart';
-import 'package:lichi_test/entity/list_product.dart';
+import 'package:lichi_test/domain/services/api_services.dart';
+
+import '../../domain/entity/list_product.dart';
 
 class ProductListWidgetModel extends ChangeNotifier {
   List<AProduct> _productList = [];
