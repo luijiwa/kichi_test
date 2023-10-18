@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lichi_test/routing/app_router.dart';
-import 'package:lichi_test/widgets/custom_text_style.dart';
+import 'package:lichi_test/routing/app_routes.dart';
+import 'package:lichi_test/widgets/styles/custom_text_style.dart';
 import 'package:lichi_test/widgets/product_list/product_list_model.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +38,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 // flexibleSpace: const FlexibleSpaceBar(),
                 actions: [
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () => context.pushNamed(AppRoutes.cart.name),
                     label: const Text('0'),
                     icon: const Icon(Icons.shopping_bag),
                   ),
