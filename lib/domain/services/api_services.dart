@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:lichi_test/entity/list_product.dart';
+import 'package:lichi_test/domain/entity/list_product.dart';
 
 class ApiService {
   final _dio = Dio();

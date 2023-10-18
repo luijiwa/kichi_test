@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lichi_test/entity/list_product.dart';
-
-import '../../routing/app_router.dart';
+import 'package:lichi_test/domain/entity/list_product.dart';
+import 'package:lichi_test/routing/app_routes.dart';
+import 'package:lichi_test/widgets/product_details/product_details_widget_model.dart';
 
 class ProductDetailsWidget extends StatelessWidget {
   const ProductDetailsWidget({
@@ -25,12 +25,13 @@ class ProductDetailsWidget extends StatelessWidget {
             ))))
         .toList();
     color.addAll(otherColor);
-
+    final ProductDetailsWidgetModel _model = ProductDetailsWidgetModel();
     return Scaffold(
       body: CustomScrollView(
         // physics: ScrollPhysics(),
         slivers: [
           SliverAppBar(
+              automaticallyImplyLeading: false,
               expandedHeight: 524,
               flexibleSpace: FlexibleSpaceBar(
                 background: Image.network(
@@ -43,14 +44,14 @@ class ProductDetailsWidget extends StatelessWidget {
                 width: 78,
                 height: 45,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () => context.pushNamed(AppRoutes.cart.name),
                   icon: const Icon(Icons.shopping_bag),
                   label: const Text('0'),
                 ),
               ),
               actions: [
                 IconButton.filledTonal(
-                  onPressed: () {},
+                  onPressed: () => context.pop(),
                   icon: const Icon(Icons.close),
                 ),
               ]),
@@ -119,10 +120,19 @@ class ProductDetailsWidget extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
-                  ),
-                  onPressed: () => context.goNamed(
-                    AppRoutes.successModal.name,
-                  ),
+                  ), //Здесь требуется картинка, название, размер
+                  onPressed: () {
+                    _model.addCartItem(product);
+
+                    context.pushNamed(
+                      AppRoutes.successModal.name,
+                      queryParameters: {
+                        'image': product.photos[0].big,
+                        'name': product.name,
+                        'size': product.sizes.size3.name,
+                      },
+                    );
+                  },
                   child: const Text('Добавить в корзину'),
                 ),
               ),
