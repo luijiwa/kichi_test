@@ -18,6 +18,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     super.initState();
     Future.microtask(
         () => context.read<ProductListWidgetModel>().loadProduct());
+    Future.microtask(
+        () => context.read<ProductListWidgetModel>().getCartItemsCount());
   }
 
   @override
@@ -26,20 +28,21 @@ class _ProductListWidgetState extends State<ProductListWidget> {
         (MediaQuery.of(context).size.height);
     final productList =
         Provider.of<ProductListWidgetModel>(context).productList;
+    final cartCount =
+        Provider.of<ProductListWidgetModel>(context).cartCount.toString();
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: CustomScrollView(
-          // physics: ScrollPhysics(),
           slivers: [
             SliverAppBar(
                 title: const Text('Каталог товаров'),
                 centerTitle: true,
-                // flexibleSpace: const FlexibleSpaceBar(),
                 actions: [
                   ElevatedButton.icon(
                     onPressed: () => context.pushNamed(AppRoutes.cart.name),
-                    label: const Text('0'),
+                    label: Text(cartCount),
                     icon: const Icon(Icons.shopping_bag),
                   ),
                 ]),
@@ -89,18 +92,10 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 145,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Платья '),
-                        Icon(Icons.expand_more),
-                      ],
-                    ),
-                  ),
+                const SizedBox(height: 10),
+                const SizedBox(
+                  height: 125,
+                  child: CustomSelectWidget(),
                 ),
               ]),
             ),
@@ -118,6 +113,43 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomSelectWidget extends StatelessWidget {
+  const CustomSelectWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    List items = ['Новинки', 'Платья', 'Юбки', 'Обувь'];
+    return TextButton(
+      onPressed: () => showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                alignment: Alignment.center,
+                title: const Text(
+                  'Выберите категорию:',
+                  style: CustomTextStyle.paragraph,
+                ),
+                content: SizedBox(
+                  width: double.maxFinite,
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    shrinkWrap: true,
+                    itemBuilder: (_, int index) {
+                      return Text(items[index]);
+                    },
+                  ),
+                ),
+              )),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Платья'),
+          Icon(Icons.expand_more),
+        ],
       ),
     );
   }
