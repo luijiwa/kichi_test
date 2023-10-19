@@ -73,6 +73,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                         label: const Text('Тёмная тема'),
                       ),
                     ),
+                    const SizedBox(width: 20),
                     SizedBox(
                       height: 86,
                       child: ElevatedButton.icon(
@@ -107,8 +108,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               itemCount: productList.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 26,
-                crossAxisSpacing: 6,
+                mainAxisSpacing: 26, // Отступ между элементами
+                crossAxisSpacing: 6, // Отступ между рядами
                 childAspectRatio: childAspectRatio,
               ),
               itemBuilder: (BuildContext context, int index) {
@@ -173,6 +174,8 @@ class ProductListItem extends StatelessWidget {
               product.name,
               textAlign: TextAlign.center,
               style: CustomTextStyle.cartPriceStyle1,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 19),
             Container(
@@ -184,8 +187,8 @@ class ProductListItem extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    mainAxisSpacing: 9,
+                    crossAxisCount: 1, // Отступ между элементами
+                    mainAxisSpacing: 9, // Отступ между рядами
                   ),
                   itemCount: color.length,
                   itemBuilder: (BuildContext context, int index) {
