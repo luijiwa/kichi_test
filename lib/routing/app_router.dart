@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lichi_test/domain/entity/list_product.dart';
 import 'package:lichi_test/routing/app_routes.dart';
 import 'package:lichi_test/widgets/cart/cart_widget.dart';
 import 'package:lichi_test/widgets/cart/cart_widget_model.dart';
@@ -27,12 +26,12 @@ class AppRouter {
             name: AppRoutes.catalogItem.name,
             path: AppRoutes.catalogItem.path,
             pageBuilder: (context, state) {
-              final product = state.extra as AProduct;
+              final id = int.parse(state.uri.queryParameters['id'] ?? '');
               return CustomTransitionPage(
                 key: state.pageKey,
                 child: ChangeNotifierProvider(
                   create: (context) => ProductDetailsWidgetModel(),
-                  child: ProductDetailsWidget(product: product),
+                  child: ProductDetailsWidget(id: id),
                 ),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {

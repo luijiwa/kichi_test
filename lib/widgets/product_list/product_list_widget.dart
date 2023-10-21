@@ -17,7 +17,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   void initState() {
     super.initState();
     Future.microtask(
-        () => context.read<ProductListWidgetModel>().loadProduct());
+        () => context.read<ProductListWidgetModel>().loadProducts());
     Future.microtask(
         () => context.read<ProductListWidgetModel>().getCartItemsCount());
   }
@@ -240,7 +240,9 @@ class ProductListItem extends StatelessWidget {
             onTap: () {
               context.goNamed(
                 AppRoutes.catalogItem.name,
-                extra: product,
+                queryParameters: {
+                  'id': product.id.toString(),
+                },
               );
             },
           ),
