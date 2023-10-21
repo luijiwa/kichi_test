@@ -3,16 +3,9 @@ import 'package:lichi_test/domain/entity/list_product.dart';
 
 class ApiService {
   final _dio = Dio();
-  String url = 'https://api.lichi.com/category/get_category_product_list';
 
-  Future<List<AProduct>> fetchProducts() async {
-    Response response = await _dio.post(url, data: {
-      'shop': 2,
-      'lang': 1,
-      'category': 'dresses',
-      'limit': 12,
-      'pages': 1,
-    });
+  Future<List<AProduct>> fetchProducts(String url, Object data) async {
+    Response response = await _dio.post(url, data: data);
     if (response.statusCode == 200) {
       final apiData = response.data['api_data'];
       final List<dynamic> aProduct = apiData['aProduct'];
@@ -21,7 +14,20 @@ class ApiService {
           aProduct.map((json) => AProduct.fromJson(json)).toList();
       return productList;
     } else {
-      throw Exception('Ошибка при загрузке новостей');
+      throw Exception('Ошибка при загрузке списка товаров');
+    }
+  }
+
+  Future<AProduct> fetchOneProduct(String url, Object data) async {
+    Response response = await _dio.post(url, data: data);
+    if (response.statusCode == 200) {
+      final apiData = response.data['api_data'];
+      final aProduct = apiData['aData'];
+
+      final AProduct productDetails = AProduct.fromJson(aProduct);
+      return productDetails;
+    } else {
+      throw Exception('Ошибка при загрузке данных товара');
     }
   }
 }
